@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import store, { createNewMessage,receivedNewMessage } from '../store';
-import axios from 'axios'
-import socket from '../socket'
+import store, { createNewMessage,receivedNewMessage, postMessage } from '../store';
+import axios from 'axios';
+import socket from '../socket';
 
 export default class NewMessageEntry extends Component {
   constructor (props) {
@@ -31,17 +31,10 @@ export default class NewMessageEntry extends Component {
     const content = this.state.newMessageEntry
     // our channelId is available from the props sent by MessagesList, which it receives as props from the Route!
     const channelId = this.props.channelId
-
-    axios.post('/api/messages/', {
-      content : content,
-      channelId : channelId
-    })
-    .then(res => res.data)
-    .then(message => {
-      store.dispatch(receivedNewMessage(message));
-      socket.emit('new-message', message)
-    })
-
+    const name = this.state.name
+    const message = {content : content, channelId : channelId, name: name}
+    console.log(message);
+    store.dispatch(postMessage(message));
   }
 
   render () {
